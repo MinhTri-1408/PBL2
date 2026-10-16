@@ -1,0 +1,16 @@
+# Build
+build/
+cmake-build-*/
+out/
+*.o
+*.obj
+*.exe
+*.out
+app
+
+# IDE
+.vs/
+.vscode/
+.idea/
+CMakeUserPresets.json
+compile_commands.json

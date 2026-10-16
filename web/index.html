@@ -1,0 +1,2049 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quản lý đặt sân</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --concrete: #E3E9EC;
+      --paper: #F8FAFB;
+      --ink: #13222B;
+      --ink-2: #4C5D68;
+      --rule: #C5D0D6;
+      --court: #2A6B54;
+      --court-deep: #1E5440;
+      --court-line: rgba(255, 255, 255, .42);
+      --court-line-soft: rgba(255, 255, 255, .16);
+      --tape: #F2C230;
+      --tape-2: #E5B21A;
+      --navy: #17324D;
+      --danger: #A93A22;
+      --focus: #1D5FD6;
+      --sans: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+      --cond: "Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+      --label-w: 200px;
+      --hw: 56px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--concrete);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+      color: inherit;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* ---------- Đầu trang ---------- */
+    .top {
+      background: var(--court-deep);
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .top h1 {
+      margin: 0;
+      font-family: var(--cond);
+      font-weight: 700;
+      font-size: 30px;
+      letter-spacing: .01em;
+    }
+
+    .datebar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .datebar input[type=date] {
+      padding: 6px 10px;
+      border: 1px solid rgba(255, 255, 255, .6);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    /* ---------- Nút ---------- */
+    .btn {
+      border: 1px solid var(--ink);
+      background: transparent;
+      border-radius: 4px;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      background: rgba(19, 34, 43, .08);
+    }
+
+    .btn.primary {
+      background: var(--court-deep);
+      border-color: var(--court-deep);
+      color: #fff;
+    }
+
+    .btn.primary:hover {
+      background: #174536;
+    }
+
+    .btn.danger {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .btn.danger:hover {
+      background: rgba(169, 58, 34, .08);
+    }
+
+    .btn.sm {
+      padding: 2px 9px;
+      font-size: 13px;
+    }
+
+    .top .btn {
+      border-color: rgba(255, 255, 255, .6);
+      color: #fff;
+    }
+
+    .top .btn:hover {
+      background: rgba(255, 255, 255, .14);
+    }
+
+    /* ---------- Bố cục ---------- */
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 24px;
+      padding: 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .panel {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 20px;
+    }
+
+    .bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .bar h2 {
+      margin: 0;
+      font-family: var(--cond);
+      font-weight: 600;
+      line-height: 1;
+      display: flex;
+      gap: 12px;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .bar .wd {
+      font-size: 24px;
+      color: var(--ink-2);
+    }
+
+    .bar .dt {
+      font-size: 44px;
+      font-weight: 700;
+    }
+
+    .summary {
+      margin: 4px 0 0;
+      color: var(--ink-2);
+      font-size: 14px;
+    }
+
+    .bar-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      margin: 0 0 12px;
+      font-size: 13px;
+      color: var(--ink-2);
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sw {
+      width: 28px;
+      height: 16px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .sw.free {
+      background: var(--court);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .75);
+    }
+
+    .sw.unpaid {
+      background: repeating-linear-gradient(135deg, var(--tape) 0 5px, var(--tape-2) 5px 10px);
+      box-shadow: inset 0 0 0 2px var(--ink);
+    }
+
+    .sw.paid {
+      background: var(--navy);
+    }
+
+    /* ---------- Tab phân loại sân ---------- */
+    .court-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+    }
+
+    .court-tabs {
+      display: inline-flex;
+      background: #D9E3E8;
+      border-radius: 8px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .court-tab {
+      border: 0;
+      background: transparent;
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--ink-2);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all .16s ease;
+    }
+
+    .court-tab:hover {
+      color: var(--ink);
+      background: rgba(255, 255, 255, .5);
+    }
+
+    .court-tab.active {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 2px 6px rgba(19, 34, 43, .12);
+    }
+
+    .court-tab[data-court-tab="vip"].active {
+      color: #92400E;
+      background: #FFFBEB;
+      box-shadow: 0 2px 6px rgba(217, 119, 6, .2);
+    }
+
+    .tab-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 99px;
+      background: #CBD5E1;
+      color: var(--ink);
+    }
+
+    .tab-badge.vip {
+      background: #FDE68A;
+      color: #92400E;
+    }
+
+    /* ---------- Bảng lịch ---------- */
+    .board-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      background: var(--paper);
+    }
+
+    .board {
+      min-width: calc(var(--label-w) + var(--hours, 18) * var(--hw));
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: var(--label-w) calc(var(--hours, 18) * var(--hw));
+      border-top: 1px solid var(--rule);
+    }
+
+    .row.head {
+      border-top: 0;
+    }
+
+    .label {
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      background: var(--paper);
+      border-right: 1px solid var(--rule);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .row.head .label {
+      justify-content: center;
+      padding: 6px 12px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink-2);
+    }
+
+    .cname {
+      font-family: var(--cond);
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .cmeta {
+      color: var(--ink-2);
+      font-size: 13px;
+    }
+
+    .cstat {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .cstat.free {
+      color: var(--court-deep);
+    }
+
+    .cstat.partial {
+      color: #7D5700;
+    }
+
+    .cstat.full {
+      color: var(--danger);
+    }
+
+    .cbtns {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .axis {
+      position: relative;
+      height: 36px;
+      background-image: linear-gradient(to right, var(--rule) 1px, transparent 1px);
+      background-size: var(--hw) 100%;
+    }
+
+    .axis span {
+      position: absolute;
+      top: 7px;
+      padding-left: 5px;
+      font-family: var(--cond);
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--ink-2);
+    }
+
+    .track {
+      position: relative;
+      min-height: 78px;
+      background-color: var(--court);
+      background-image:
+        linear-gradient(to right, var(--court-line) 1px, transparent 1px),
+        linear-gradient(to right, var(--court-line-soft) 1px, transparent 1px);
+      background-size: var(--hw) 100%, calc(var(--hw) / 2) 100%;
+      box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .78);
+      cursor: crosshair;
+    }
+
+    .ghost {
+      display: none;
+      position: absolute;
+      top: 7px;
+      bottom: 7px;
+      border: 2px dashed #fff;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, .2);
+      color: #fff;
+      font-family: var(--cond);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 2px 8px;
+      pointer-events: none;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .blk {
+      position: absolute;
+      top: 7px;
+      bottom: 7px;
+      z-index: 2;
+      left: calc(var(--s) * var(--hw) / 60);
+      width: calc(var(--d) * var(--hw) / 60 - 2px);
+      border: 0;
+      border-radius: 4px;
+      padding: 4px 8px;
+      text-align: left;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .blk.unpaid {
+      background: repeating-linear-gradient(135deg, var(--tape) 0 9px, var(--tape-2) 9px 18px);
+      color: var(--ink);
+      box-shadow: inset 0 0 0 2px var(--ink);
+    }
+
+    .blk.paid {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .blk:hover {
+      filter: brightness(1.06);
+    }
+
+    .bn {
+      font-weight: 600;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bt {
+      font-family: var(--cond);
+      font-weight: 600;
+      font-size: 16px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bt.stack {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.05;
+      font-size: 15px;
+    }
+
+    .blk.tiny {
+      padding: 4px 2px;
+      align-items: center;
+    }
+
+    .blk.tiny .bn {
+      display: none;
+    }
+
+    .blk.tiny .bt {
+      font-size: 14px;
+    }
+
+    .hint {
+      margin: 10px 0 0;
+      font-size: 13px;
+      color: var(--ink-2);
+    }
+
+    .empty {
+      padding: 36px 24px;
+    }
+
+    .empty p {
+      margin: 0 0 6px;
+    }
+
+    .empty p:first-child {
+      font-family: var(--cond);
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    .empty .btn {
+      margin-top: 12px;
+    }
+
+    /* ---------- Tra cứu theo số điện thoại ---------- */
+    .lookup h2 {
+      margin: 0 0 4px;
+      font-family: var(--cond);
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    .note {
+      margin: 0 0 12px;
+      color: var(--ink-2);
+      font-size: 14px;
+    }
+
+    .lk-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .lk-form input {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 10px;
+      border: 1px solid #94A4AD;
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    .lk-item {
+      border-top: 1px solid var(--rule);
+      padding: 12px 0;
+    }
+
+    .lk-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .lk-mid {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 2px;
+    }
+
+    .lk-mid .t {
+      font-family: var(--cond);
+      font-weight: 600;
+      font-size: 22px;
+    }
+
+    .lk-mid .m {
+      font-family: var(--cond);
+      font-weight: 700;
+      font-size: 26px;
+    }
+
+    .lk-name {
+      color: var(--ink-2);
+      font-size: 13px;
+    }
+
+    /* ---------- Hộp thoại ---------- */
+    dialog {
+      border: 0;
+      border-radius: 10px;
+      padding: 0;
+      width: min(480px, calc(100vw - 32px));
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 24px 64px rgba(19, 34, 43, .38);
+    }
+
+    dialog::backdrop {
+      background: rgba(19, 34, 43, .5);
+    }
+
+    dialog[open] {
+      animation: pop .14s ease-out;
+    }
+
+    @keyframes pop {
+      from {
+        transform: translateY(8px) scale(.98);
+        opacity: 0;
+      }
+
+      to {
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    .dlg-head {
+      padding: 18px 22px 0;
+    }
+
+    .dlg-head h3 {
+      margin: 0;
+      font-family: var(--cond);
+      font-weight: 700;
+      font-size: 28px;
+    }
+
+    .dlg-body {
+      padding: 14px 22px 4px;
+    }
+
+    .dlg-foot {
+      padding: 12px 22px 20px;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    label input,
+    label select {
+      display: block;
+      width: 100%;
+      margin-top: 4px;
+      padding: 8px 10px;
+      border: 1px solid #94A4AD;
+      border-radius: 4px;
+      background: #fff;
+      font-weight: 400;
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .err {
+      margin: 4px 0 0;
+      min-height: 1.5em;
+      color: var(--danger);
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .free-hint {
+      margin: -4px 0 12px;
+      font-size: 13px;
+      color: var(--ink-2);
+      min-height: 1.4em;
+    }
+
+    .estimate {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-top: 1px solid var(--rule);
+      padding-top: 10px;
+    }
+
+    .estimate b {
+      font-family: var(--cond);
+      font-size: 30px;
+    }
+
+    .inv {
+      margin: 0;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px 18px;
+      font-size: 15px;
+    }
+
+    .inv dt {
+      color: var(--ink-2);
+    }
+
+    .inv dd {
+      margin: 0;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .inv .total {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-top: 1px solid var(--rule);
+      margin-top: 6px;
+      padding-top: 10px;
+    }
+
+    .inv .total b {
+      font-family: var(--cond);
+      font-size: 38px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 1px 10px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .badge.unpaid {
+      background: var(--tape);
+      color: var(--ink);
+    }
+
+    .badge.paid {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .badge.vip,
+    .vip-tag {
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      letter-spacing: .02em;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    }
+
+    .badge.standard {
+      background: #E2E8F0;
+      color: #475569;
+    }
+
+    .row.vip-court .label {
+      background: linear-gradient(to right, #FFFBEB 0%, var(--paper) 100%);
+      border-left: 4px solid #F59E0B;
+    }
+
+    /* ---------- Bảng thống kê & Báo cáo ---------- */
+    dialog.wide-dlg {
+      width: min(960px, calc(100vw - 32px));
+      max-height: 90vh;
+    }
+
+    dialog.wide-dlg .dlg-body {
+      overflow-y: auto;
+      max-height: calc(90vh - 140px);
+      padding: 16px 22px;
+    }
+
+    .stats-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      background: #EBF1F5;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tab-group {
+      display: inline-flex;
+      background: #D6E0E6;
+      border-radius: 6px;
+      padding: 3px;
+    }
+
+    .tab-btn {
+      border: 0;
+      background: transparent;
+      padding: 6px 16px;
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--ink-2);
+      transition: all .15s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--ink);
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 2px 6px rgba(19, 34, 43, .12);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 14px 16px;
+      box-shadow: 0 1px 3px rgba(19, 34, 43, .04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card.featured {
+      border-left: 4px solid var(--court-deep);
+    }
+
+    .stat-card.vip-card {
+      border-left: 4px solid #F59E0B;
+    }
+
+    .stat-card .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-2);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-card .card-val {
+      font-family: var(--cond);
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+
+    .stat-card .card-sub {
+      font-size: 12px;
+      color: var(--ink-2);
+      margin-top: 6px;
+    }
+
+    .stat-card .card-sub b {
+      color: var(--ink);
+    }
+
+    .chart-section {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .chart-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chart-bars-wrap {
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 180px;
+      min-width: 100%;
+      padding: 30px 0 26px;
+      border-bottom: 2px solid var(--rule);
+      position: relative;
+    }
+
+    .chart-col {
+      flex: 1;
+      min-width: 32px;
+      max-width: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+      position: relative;
+    }
+
+    .bar-stack {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      position: relative;
+      cursor: pointer;
+      background: repeating-linear-gradient(135deg, var(--tape) 0 4px, var(--tape-2) 4px 8px);
+      transition: height .24s ease, filter .15s ease;
+    }
+
+    .bar-stack:hover {
+      filter: brightness(1.1);
+    }
+
+    .bar-paid {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--navy);
+      border-radius: 0 0 0 0;
+      transition: height .24s ease;
+    }
+
+    .bar-val {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      color: var(--ink);
+    }
+
+    .bar-lbl {
+      position: absolute;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+      color: var(--ink-2);
+    }
+
+    /* Tooltip nổi độc lập, không bị cắt bởi overflow của container */
+    .chart-tooltip-floating {
+      position: fixed;
+      display: none;
+      background: #111E26;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.5;
+      white-space: nowrap;
+      z-index: 10000;
+      pointer-events: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+      transform: translate(-50%, -100%);
+      transition: opacity .1s ease;
+    }
+
+    .chart-tooltip-floating::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 6px;
+      border-style: solid;
+      border-color: #111E26 transparent transparent transparent;
+    }
+
+    .chart-tooltip-floating.flipped {
+      transform: translate(-50%, 12px);
+    }
+
+    .chart-tooltip-floating.flipped::after {
+      top: auto;
+      bottom: 100%;
+      border-color: transparent transparent #111E26 transparent;
+    }
+
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    .stats-table th {
+      background: #F1F5F7;
+      text-align: left;
+      padding: 9px 12px;
+      border-bottom: 2px solid var(--rule);
+      font-weight: 600;
+      color: var(--ink-2);
+    }
+
+    .stats-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .stats-table tr:hover {
+      background: #F8FAFB;
+    }
+
+    .stats-table tr.total-row {
+      background: #EDF2F5;
+      font-weight: 700;
+      border-top: 2px solid var(--rule);
+    }
+
+    /* ---------- Thông báo ---------- */
+    .toast {
+      position: fixed;
+      left: 20px;
+      bottom: 20px;
+      z-index: 50;
+      max-width: calc(100vw - 40px);
+      background: var(--ink);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity .18s, transform .18s;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: none;
+    }
+
+    .toast.error {
+      background: var(--danger);
+    }
+
+    @media (max-width: 1000px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 700px) {
+      :root {
+        --label-w: 150px;
+      }
+
+      .top,
+      .layout {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      .bar .dt {
+        font-size: 34px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="top">
+    <h1>Quản lý đặt sân</h1>
+    <div class="datebar">
+      <button class="btn" data-act="prev-day" aria-label="Ngày trước">‹</button>
+      <input type="date" id="date" aria-label="Chọn ngày">
+      <button class="btn" data-act="next-day" aria-label="Ngày sau">›</button>
+      <button class="btn" data-act="today">Hôm nay</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main class="panel" aria-labelledby="boardTitle">
+      <div class="bar">
+        <div>
+          <h2 id="boardTitle"><span class="wd" id="wd"></span><span class="dt" id="dt"></span></h2>
+          <p class="summary" id="summary"></p>
+        </div>
+        <div class="bar-actions">
+          <button class="btn primary" data-act="add-booking">Đặt sân</button>
+          <button class="btn" data-act="add-court">Thêm sân</button>
+          <button class="btn" data-act="open-stats"
+            style="background:var(--navy);color:#fff;border-color:var(--navy);">Thống kê</button>
+        </div>
+      </div>
+      <div class="court-filter-bar">
+        <div class="court-tabs" role="tablist">
+          <button type="button" class="court-tab active" data-court-tab="standard">
+            Sân thường <span class="tab-badge" id="stdCourtCount">0</span>
+          </button>
+          <button type="button" class="court-tab" data-court-tab="vip">
+            Sân VIP <span class="tab-badge vip" id="vipCourtCount">0</span>
+          </button>
+          <button type="button" class="court-tab" data-court-tab="all">
+            Tất cả <span class="tab-badge" id="allCourtCount">0</span>
+          </button>
+        </div>
+        <p class="legend" aria-label="Chú thích" style="margin:0;">
+          <span><i class="sw free"></i>Trống</span>
+          <span><i class="sw unpaid"></i>Chưa thanh toán</span>
+          <span><i class="sw paid"></i>Đã thanh toán</span>
+        </p>
+      </div>
+      <div class="board-scroll">
+        <div class="board" id="board" aria-live="polite"></div>
+      </div>
+      <p class="hint">Bấm vào chỗ trống trên lịch để đặt sân. Bấm vào một lượt đặt để xem hóa đơn.</p>
+    </main>
+
+    <aside class="panel lookup" aria-labelledby="lkTitle">
+      <h2 id="lkTitle">Tìm theo số điện thoại</h2>
+      <p class="note">Xem các lượt đặt chưa thanh toán của một khách, rồi thanh toán hoặc hủy.</p>
+      <form id="lookupForm" class="lk-form">
+        <input id="lkPhone" inputmode="tel" placeholder="Số điện thoại" aria-label="Số điện thoại" autocomplete="off"
+          required>
+        <button class="btn primary">Tìm</button>
+      </form>
+      <div id="lkResult" aria-live="polite"></div>
+    </aside>
+  </div>
+
+  <!-- Thêm / sửa sân -->
+  <dialog id="courtDlg" aria-labelledby="courtTitle">
+    <form id="courtForm">
+      <div class="dlg-head">
+        <h3 id="courtTitle">Thêm sân</h3>
+      </div>
+      <div class="dlg-body">
+        <label>Tên sân<input id="courtName" required maxlength="40" autocomplete="off"></label>
+        <label>Loại sân
+          <select id="courtType">
+            <option value="standard">Sân thường</option>
+            <option value="vip">Sân VIP (Cao cấp)</option>
+          </select>
+        </label>
+        <label>Giá thuê mỗi giờ (₫)<input id="courtPrice" type="number" min="1000" step="500" required
+            inputmode="numeric"></label>
+        <p class="err" id="courtErr" role="alert"></p>
+      </div>
+      <div class="dlg-foot">
+        <button type="button" class="btn" data-act="close">Đóng</button>
+        <button class="btn primary">Lưu</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Đặt sân -->
+  <dialog id="bookDlg" aria-labelledby="bookTitle">
+    <form id="bookForm">
+      <div class="dlg-head">
+        <h3 id="bookTitle">Đặt sân</h3>
+      </div>
+      <div class="dlg-body">
+        <div class="two">
+          <label>Tên khách<input id="bName" required maxlength="60" autocomplete="off"></label>
+          <label>Số điện thoại<input id="bPhone" required inputmode="tel" pattern="[0-9]{9,11}" title="9 đến 11 chữ số"
+              autocomplete="off"></label>
+        </div>
+        <label>Sân<select id="bCourt" required></select></label>
+        <label>Ngày<input id="bDate" type="date" required></label>
+        <div class="two">
+          <label>Giờ bắt đầu<input id="bStart" type="time" required min="05:00" max="22:59"></label>
+          <label>Giờ kết thúc<input id="bEnd" type="time" required min="05:01" max="23:00"></label>
+        </div>
+        <p class="free-hint" id="bHint"></p>
+        <div class="estimate"><span>Tạm tính</span><b id="bEst">—</b></div>
+        <p class="err" id="bookErr" role="alert"></p>
+      </div>
+      <div class="dlg-foot">
+        <button type="button" class="btn" data-act="close">Đóng</button>
+        <button class="btn primary">Đặt sân</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Chi tiết lượt đặt / hóa đơn -->
+  <dialog id="invDlg" aria-labelledby="invTitle">
+    <div class="dlg-head">
+      <h3 id="invTitle">Lượt đặt</h3>
+    </div>
+    <div class="dlg-body">
+      <dl class="inv" id="invBody"></dl>
+      <p class="err" id="invErr" role="alert"></p>
+    </div>
+    <div class="dlg-foot" id="invFoot"></div>
+  </dialog>
+
+  <!-- Thống kê & Báo cáo doanh thu -->
+  <dialog id="statsDlg" class="wide-dlg" aria-labelledby="statsTitle">
+    <div class="dlg-head" style="display:flex;justify-content:space-between;align-items:center;">
+      <h3 id="statsTitle">Báo cáo & Thống kê doanh thu</h3>
+      <button type="button" class="btn sm" data-act="close" aria-label="Đóng">✕</button>
+    </div>
+    <div class="dlg-body">
+      <div class="stats-controls">
+        <div class="tab-group" role="tablist">
+          <button type="button" class="tab-btn active" data-period="week">Theo tuần</button>
+          <button type="button" class="tab-btn" data-period="month">Theo tháng</button>
+          <button type="button" class="tab-btn" data-period="year">Theo năm</button>
+        </div>
+        <div class="datebar" style="gap:6px">
+          <button type="button" class="btn sm" data-stats-act="prev" aria-label="Kỳ trước">‹</button>
+          <span id="statsPeriodLabel" style="font-weight:600;font-size:15px;min-width:200px;text-align:center;"></span>
+          <button type="button" class="btn sm" data-stats-act="next" aria-label="Kỳ sau">›</button>
+          <button type="button" class="btn sm" data-stats-act="current">Hiện tại</button>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="statsKpis"></div>
+
+      <div class="chart-section">
+        <div class="chart-title">
+          <span>Biểu đồ doanh thu</span>
+          <span class="legend" style="margin:0;font-size:12.5px;">
+            <span><i class="sw paid" style="width:14px;height:10px;"></i>Đã thanh toán</span>
+            <span><i class="sw unpaid" style="width:14px;height:10px;"></i>Chờ thanh toán</span>
+          </span>
+        </div>
+        <div class="chart-bars-wrap">
+          <div class="chart-bars" id="statsChart"></div>
+        </div>
+      </div>
+
+      <div class="chart-section" style="padding:0;overflow:hidden;">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--rule);font-weight:600;">Chi tiết doanh thu</div>
+        <div style="overflow-x:auto;">
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>Mốc thời gian</th>
+                <th>Số lượt</th>
+                <th>Thời lượng</th>
+                <th>Sân thường</th>
+                <th>Sân VIP</th>
+                <th>Đã thanh toán</th>
+                <th style="text-align:right;">Tổng cộng</th>
+              </tr>
+            </thead>
+            <tbody id="statsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn" data-act="close">Đóng</button>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+  <div id="chartTooltip" class="chart-tooltip-floating"></div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      let HW = 56; // pixel mỗi giờ trên bảng lịch; tự co giãn theo độ rộng màn hình (fitBoard)
+      document.documentElement.style.setProperty('--hw', HW + 'px');
+
+      const $ = (sel, root = document) => root.querySelector(sel);
+      const pad = n => String(n).padStart(2, '0');
+      const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+      const toDateStr = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+      const parseDate = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+      const addDays = (s, n) => { const d = parseDate(s); d.setDate(d.getDate() + n); return toDateStr(d); };
+      const addMonths = (s, n) => { const d = parseDate(s); d.setMonth(d.getMonth() + n); return toDateStr(d); };
+      const addYears = (s, n) => { const d = parseDate(s); d.setFullYear(d.getFullYear() + n); return toDateStr(d); };
+      const fmtDate = s => { const [y, m, d] = s.split('-'); return `${d}/${m}/${y}`; };
+      const weekday = s => cap(parseDate(s).toLocaleDateString('vi-VN', { weekday: 'long' }));
+      const fmtMoney = n => Number(n).toLocaleString('vi-VN') + ' ₫';
+      const fmtHours = min => (min / 60).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + ' giờ';
+      const toMin = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+      const toTime = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+
+      const state = { date: toDateStr(new Date()), board: null, phone: '', lookup: [], courtTab: 'standard' };
+      let editingCourtId = null;
+      let currentBooking = null;
+
+      // ---------- Thông điệp từ máy chủ (không dấu) -> tiếng Việt có dấu ----------
+      const MSG = {
+        'Ten san khong duoc de trong.': 'Tên sân không được để trống.',
+        'Gia san phai lon hon 0.': 'Giá sân phải lớn hơn 0.',
+        'Khong tim thay san.': 'Không tìm thấy sân.',
+        'San con luot dat chua thanh toan, hay huy hoac thanh toan truoc.': 'Sân còn lượt đặt chưa thanh toán. Hãy hủy hoặc thanh toán trước khi xóa.',
+        'Da them san.': 'Đã thêm sân.',
+        'Da cap nhat san.': 'Đã cập nhật sân.',
+        'Da xoa san.': 'Đã xóa sân.',
+        'Ten khach khong duoc de trong.': 'Tên khách không được để trống.',
+        'So dien thoai phai gom 9-11 chu so.': 'Số điện thoại phải gồm 9 đến 11 chữ số.',
+        'Ngay khong hop le (dinh dang YYYY-MM-DD).': 'Ngày không hợp lệ.',
+        'Gio ket thuc phai sau gio bat dau.': 'Giờ kết thúc phải sau giờ bắt đầu.',
+        'Gio khong hop le (dinh dang HH:MM).': 'Giờ không hợp lệ.',
+        'Khung gio nay da co nguoi dat.': 'Khung giờ này đã có người đặt.',
+        'Dat san thanh cong.': 'Đặt sân thành công.',
+        'Khong tim thay luot dat.': 'Không tìm thấy lượt đặt.',
+        'Luot dat da thanh toan, khong the huy.': 'Lượt đặt đã thanh toán nên không thể hủy.',
+        'Da huy luot dat.': 'Đã hủy lượt đặt.',
+        'Luot dat nay da thanh toan roi.': 'Lượt đặt này đã thanh toán rồi.',
+        'Thanh toan thanh cong.': 'Thanh toán thành công.',
+        'Du lieu gui len khong hop le.': 'Dữ liệu gửi lên không hợp lệ.',
+        'Loi may chu.': 'Máy chủ gặp lỗi. Hãy thử lại.',
+        'Khong tim thay.': 'Không tìm thấy.'
+      };
+      function vi(msg) {
+        if (!msg) return '';
+        if (MSG[msg]) return MSG[msg];
+        const m = msg.match(/^San chi mo cua tu (\d\d:\d\d) den (\d\d:\d\d)\.$/);
+        return m ? `Sân chỉ mở cửa từ ${m[1]} đến ${m[2]}.` : msg;
+      }
+
+      // ---------- Gọi API ----------
+      async function api(method, url, body) {
+        let res;
+        try {
+          res = await fetch(url, {
+            method,
+            headers: body ? { 'Content-Type': 'application/json' } : undefined,
+            body: body ? JSON.stringify(body) : undefined
+          });
+        } catch (e) {
+          throw new Error('Không kết nối được máy chủ. Hãy kiểm tra chương trình app_web còn đang chạy.');
+        }
+        let data = {};
+        try { data = await res.json(); } catch (e) { /* bỏ qua */ }
+        if (!res.ok || data.ok === false) throw new Error(vi(data.message) || 'Có lỗi xảy ra.');
+        return data;
+      }
+
+      let toastTimer;
+      function toast(text, isError) {
+        const t = $('#toast');
+        t.textContent = text;
+        t.className = 'toast show' + (isError ? ' error' : '');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { t.className = 'toast'; }, 4000);
+      }
+
+      const findCourt = id => state.board && state.board.courts.find(c => c.id === id);
+      function findBooking(id) {
+        if (!state.board) return null;
+        for (const c of state.board.courts) {
+          const k = c.bookings.find(b => b.id === id);
+          if (k) return k;
+        }
+        return null;
+      }
+
+      // Sắp xếp sân: Sân VIP lên trước, sau đó đến Sân thường.
+      // Các sân cùng loại được sắp xếp tự nhiên theo số/tên (Sân VIP 1 -> Sân VIP 2 -> ...).
+      function sortCourts(courts) {
+        if (!Array.isArray(courts)) return [];
+        return [...courts].sort((a, b) => {
+          const aVip = a.type === 'vip';
+          const bVip = b.type === 'vip';
+          if (aVip !== bVip) return aVip ? -1 : 1;
+          const cmp = (a.name || '').localeCompare(b.name || '', 'vi', { numeric: true, sensitivity: 'base' });
+          if (cmp !== 0) return cmp;
+          return (a.id || 0) - (b.id || 0);
+        });
+      }
+
+      // Tự động gợi ý tên sân tiếp theo dựa trên các sân hiện có:
+      // Ví dụ: đã có Sân 1, Sân 2, Sân 3 -> gợi ý "Sân 4"; đã có Sân VIP 1 -> gợi ý "Sân VIP 2".
+      function nextCourtName(type = 'standard') {
+        const courts = (state.board && state.board.courts) || [];
+        const isVip = type === 'vip';
+        let maxNum = 0;
+        let count = 0;
+        for (const c of courts) {
+          const cType = c.type === 'vip' ? 'vip' : 'standard';
+          if (cType !== type) continue;
+          count++;
+          const name = (c.name || '').trim();
+          const re = isVip ? /^(?:s[âa]n\s+)?vip\s*(\d+)$/i : /^(?:s[âa]n\s*)(\d+)$/i;
+          const m = name.match(re);
+          if (m) {
+            const num = parseInt(m[1], 10);
+            if (num > maxNum) maxNum = num;
+          }
+        }
+        const nextNum = maxNum > 0 ? maxNum + 1 : count + 1;
+        return isVip ? `Sân VIP ${nextNum}` : `Sân ${nextNum}`;
+      }
+
+      // ---------- Bảng lịch ----------
+      async function loadBoard() {
+        try {
+          state.board = await api('GET', '/api/board?date=' + encodeURIComponent(state.date));
+          if (state.board && Array.isArray(state.board.courts)) {
+            state.board.courts = sortCourts(state.board.courts);
+          }
+          renderBoard();
+        } catch (e) {
+          $('#board').innerHTML = `<div class="empty"><p>Không tải được lịch.</p><p>${esc(e.message)}</p></div>`;
+        }
+      }
+
+      const statusText = c => c.status === 'free' ? 'Trống cả ngày' : c.status === 'full' ? 'Kín lịch' : `${c.bookingCount} lượt đặt`;
+
+      function renderBoard() {
+        const b = state.board;
+        if (!b) return;
+        $('#wd').textContent = weekday(state.date);
+        $('#dt').textContent = fmtDate(state.date);
+        $('#date').value = state.date;
+
+        const allCourts = sortCourts(b.courts);
+        const stdCourts = allCourts.filter(c => c.type !== 'vip');
+        const vipCourts = allCourts.filter(c => c.type === 'vip');
+
+        if ($('#stdCourtCount')) $('#stdCourtCount').textContent = stdCourts.length;
+        if ($('#vipCourtCount')) $('#vipCourtCount').textContent = vipCourts.length;
+        if ($('#allCourtCount')) $('#allCourtCount').textContent = allCourts.length;
+
+        if (!state.courtTab) state.courtTab = 'standard';
+
+        document.querySelectorAll('.court-tab').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.courtTab === state.courtTab);
+        });
+
+        let displayCourts = allCourts;
+        let tabLabel = 'tất cả sân';
+        if (state.courtTab === 'standard') {
+          displayCourts = stdCourts;
+          tabLabel = 'sân thường';
+        } else if (state.courtTab === 'vip') {
+          displayCourts = vipCourts;
+          tabLabel = 'sân VIP';
+        }
+
+        const total = displayCourts.reduce((n, c) => n + c.bookings.length, 0);
+        $('#summary').textContent = `${displayCourts.length} ${tabLabel}, ${total} lượt đặt trong ngày`;
+
+        fitBoard();
+        const hours = (b.close - b.open) / 60;
+        const board = $('#board');
+        const scroller = $('.board-scroll');
+        const prevScroll = scroller.scrollLeft;
+        board.style.setProperty('--hours', hours);
+
+        if (!displayCourts.length) {
+          const isVipTab = state.courtTab === 'vip';
+          board.innerHTML = `<div class="empty">
+        <p>${isVipTab ? 'Chưa có sân VIP nào.' : 'Chưa có sân nào trong danh mục này.'}</p>
+        <p>${isVipTab ? 'Thêm sân VIP để nâng tầm dịch vụ và áp dụng giá thuê cao cấp.' : 'Thêm sân mới để bắt đầu nhận lịch đặt.'}</p>
+        <button class="btn primary" data-act="add-court">${isVipTab ? 'Thêm sân VIP' : 'Thêm sân'}</button>
+      </div>`;
+          return;
+        }
+
+        let ticks = '';
+        for (let i = 0; i < hours; i++) ticks += `<span style="left:calc(var(--hw) * ${i})">${b.open / 60 + i}h</span>`;
+        let html = `<div class="row head"><div class="label">Sân</div><div class="axis">${ticks}</div></div>`;
+
+        for (const c of displayCourts) {
+          const blocks = c.bookings.map(k => `
+        <button class="blk ${k.paid ? 'paid' : 'unpaid'}${k.durationMinutes * HW / 60 < 52 ? ' tiny' : ''}" style="--s:${k.startMin - b.open};--d:${k.durationMinutes}"
+          data-act="detail" data-id="${k.id}"
+          title="${esc(k.customerName)} · ${k.start}–${k.end}"
+          aria-label="${esc(k.customerName)}, ${k.start} đến ${k.end}, ${k.paid ? 'đã thanh toán' : 'chưa thanh toán'}">
+          <span class="bn">${k.paid ? '✓ ' : ''}${esc(k.customerName)}</span>
+          <span class="bt${k.durationMinutes * HW / 60 < 96 ? ' stack' : ''}">${k.durationMinutes * HW / 60 < 96 ? `<span>${k.start}</span><span>${k.end}</span>` : `${k.start}–${k.end}`}</span>
+        </button>`).join('');
+          html += `
+        <div class="row ${c.type === 'vip' ? 'vip-court' : ''}">
+          <div class="label">
+            <div class="cname">
+              ${esc(c.name)}
+              ${c.type === 'vip' ? '<span class="vip-tag">⭐ VIP</span>' : ''}
+            </div>
+            <div class="cmeta">${fmtMoney(c.pricePerHour)}/giờ</div>
+            <div class="cstat ${c.status}">${statusText(c)}</div>
+            <div class="cbtns">
+              <button class="btn sm" data-act="book" data-court="${c.id}">Đặt sân</button>
+              <button class="btn sm" data-act="edit-court" data-court="${c.id}">Sửa</button>
+              <button class="btn sm danger" data-act="del-court" data-court="${c.id}">Xóa</button>
+            </div>
+          </div>
+          <div class="track" data-court="${c.id}">${blocks}<div class="ghost"></div></div>
+        </div>`;
+        }
+        board.innerHTML = html;
+        if (scroller.scrollWidth > scroller.clientWidth) {
+          if (state.scrollSet) {
+            scroller.scrollLeft = prevScroll;
+          } else {
+            // Lần đầu: cuộn tới lượt đặt đầu tiên (hoặc 17h) để khỏi phải kéo tay.
+            const starts = displayCourts.flatMap(c => c.bookings.map(k => k.startMin));
+            const from = (starts.length ? Math.min(...starts) : 17 * 60) - 60;
+            scroller.scrollLeft = Math.max(0, (from - b.open) * HW / 60);
+            state.scrollSet = true;
+          }
+        }
+      }
+
+      // Chọn độ rộng 1 giờ sao cho vừa cả ngày (tối thiểu 36px; nhỏ hơn thì cuộn ngang).
+      function fitBoard() {
+        const b = state.board;
+        const hours = (b.close - b.open) / 60;
+        const labelW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--label-w')) || 200;
+        const avail = $('.board-scroll').clientWidth - labelW - 2;
+        HW = Math.max(36, Math.min(64, Math.floor(avail / hours)));
+        document.documentElement.style.setProperty('--hw', HW + 'px');
+      }
+
+      // Giờ (phút) tại vị trí con trỏ trên 1 dòng sân, làm tròn xuống 30 phút.
+      function slotAt(track, clientX) {
+        const x = clientX - track.getBoundingClientRect().left;
+        const min = state.board.open + Math.floor(x / HW * 2) * 30;
+        return Math.max(state.board.open, Math.min(min, state.board.close - 30));
+      }
+      // Giờ kết thúc gợi ý (tối đa 1 giờ, dừng trước lượt đặt kế tiếp); 0 nếu chỗ đó đã có người đặt.
+      function freeEnd(court, start) {
+        if (court.bookings.some(k => k.startMin <= start && start < k.endMin)) return 0;
+        let end = Math.min(start + 60, state.board.close);
+        for (const k of court.bookings) if (k.startMin > start && k.startMin < end) end = k.startMin;
+        return end;
+      }
+
+      const hideGhosts = () => document.querySelectorAll('.ghost').forEach(g => { g.style.display = 'none'; });
+
+      $('#board').addEventListener('mousemove', e => {
+        hideGhosts();
+        if (e.target.closest('.blk')) return;
+        const track = e.target.closest('.track');
+        if (!track) return;
+        const court = findCourt(Number(track.dataset.court));
+        const start = slotAt(track, e.clientX);
+        const end = freeEnd(court, start);
+        if (!end) return;
+        const g = track.querySelector('.ghost');
+        g.style.display = 'block';
+        g.style.left = ((start - state.board.open) * HW / 60) + 'px';
+        g.style.width = ((end - start) * HW / 60 - 2) + 'px';
+        g.textContent = `${toTime(start)}–${toTime(end)}`;
+      });
+      $('#board').addEventListener('mouseleave', hideGhosts);
+
+      // ---------- Sự kiện bấm ----------
+      document.addEventListener('click', e => {
+        const courtTabBtn = e.target.closest('[data-court-tab]');
+        if (courtTabBtn) {
+          state.courtTab = courtTabBtn.dataset.courtTab;
+          renderBoard();
+          return;
+        }
+        const el = e.target.closest('[data-act]');
+        if (el) { handleAct(el); return; }
+        const track = e.target.closest('.track');
+        if (track && state.board) {
+          const court = findCourt(Number(track.dataset.court));
+          const start = slotAt(track, e.clientX);
+          const end = freeEnd(court, start);
+          if (end) openBook({ courtId: court.id, start: toTime(start), end: toTime(end) });
+        }
+      });
+
+      function handleAct(el) {
+        const id = Number(el.dataset.id);
+        const courtId = Number(el.dataset.court);
+        switch (el.dataset.act) {
+          case 'prev-day': state.date = addDays(state.date, -1); loadBoard(); break;
+          case 'next-day': state.date = addDays(state.date, 1); loadBoard(); break;
+          case 'today': state.date = toDateStr(new Date()); loadBoard(); break;
+          case 'open-stats': openStats(); break;
+          case 'add-court': openCourt(null); break;
+          case 'edit-court': openCourt(findCourt(courtId)); break;
+          case 'del-court': deleteCourt(courtId); break;
+          case 'add-booking': openBook({}); break;
+          case 'book': openBook({ courtId }); break;
+          case 'detail': openDetail(findBooking(id)); break;
+          case 'lookup-pay': openDetail(state.lookup.find(k => k.id === id)); break;
+          case 'lookup-cancel': cancelBooking(state.lookup.find(k => k.id === id)); break;
+          case 'pay-now': payBooking(); break;
+          case 'cancel-now': cancelFromDialog(); break;
+          case 'close': el.closest('dialog').close(); break;
+        }
+      }
+
+      $('#date').addEventListener('change', e => {
+        if (e.target.value) { state.date = e.target.value; loadBoard(); }
+      });
+      window.addEventListener('focus', () => { loadBoard(); refreshLookup(); });
+
+      // ---------- Thêm / sửa / xóa sân ----------
+      function openCourt(court) {
+        editingCourtId = court ? court.id : null;
+        const targetType = court ? (court.type || 'standard') : (state.courtTab === 'vip' ? 'vip' : 'standard');
+        $('#courtTitle').textContent = court ? 'Sửa sân' : (targetType === 'vip' ? 'Thêm sân VIP' : 'Thêm sân');
+        $('#courtType').value = targetType;
+        $('#courtName').value = court ? court.name : nextCourtName(targetType);
+        $('#courtPrice').value = court ? court.pricePerHour : (targetType === 'vip' ? 250000 : 150000);
+        $('#courtErr').textContent = '';
+        $('#courtDlg').showModal();
+        $('#courtName').focus();
+        if (!court) $('#courtName').select();
+      }
+
+      $('#courtType').addEventListener('change', e => {
+        if (editingCourtId) return;
+        const newType = e.target.value;
+        const isVip = newType === 'vip';
+        const otherType = isVip ? 'standard' : 'vip';
+        const curName = $('#courtName').value.trim();
+
+        if (!curName || curName === nextCourtName(otherType)) {
+          $('#courtName').value = nextCourtName(newType);
+          $('#courtName').select();
+        }
+
+        const curPrice = Number($('#courtPrice').value);
+        if (!curPrice || curPrice === 150000 || curPrice === 250000) {
+          $('#courtPrice').value = isVip ? 250000 : 150000;
+        }
+
+        $('#courtTitle').textContent = isVip ? 'Thêm sân VIP' : 'Thêm sân';
+      });
+
+      $('#courtForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const body = {
+          name: $('#courtName').value.trim(),
+          pricePerHour: Math.round(Number($('#courtPrice').value)),
+          type: $('#courtType').value
+        };
+        try {
+          const r = editingCourtId
+            ? await api('PUT', '/api/courts/' + editingCourtId, body)
+            : await api('POST', '/api/courts', body);
+          $('#courtDlg').close();
+          toast(vi(r.message));
+          await loadBoard();
+        } catch (err) { $('#courtErr').textContent = err.message; }
+      });
+
+      async function deleteCourt(id) {
+        const c = findCourt(id);
+        if (!c || !confirm(`Xóa ${c.name}?`)) return;
+        try {
+          const r = await api('DELETE', '/api/courts/' + id);
+          toast(vi(r.message));
+          await loadBoard();
+        } catch (err) { toast(err.message, true); }
+      }
+
+      // ---------- Đặt sân ----------
+      function openBook({ courtId, start, end }) {
+        const courts = state.board ? sortCourts(state.board.courts) : [];
+        if (!courts.length) { toast('Hãy thêm sân trước khi đặt.', true); return; }
+        $('#bCourt').innerHTML = courts.map(c =>
+          `<option value="${c.id}">${esc(c.name)}${c.type === 'vip' ? ' ⭐ [VIP]' : ''} (${fmtMoney(c.pricePerHour)}/h)</option>`
+        ).join('');
+        const court = findCourt(courtId) || courts[0];
+        $('#bCourt').value = court.id;
+        $('#bDate').value = state.date;
+        if (!start) {
+          const slot = court.freeSlots[0];
+          if (slot) { start = slot.start; end = toTime(Math.min(slot.startMin + 60, slot.endMin)); }
+        }
+        $('#bStart').value = start || '';
+        $('#bEnd').value = end || '';
+        $('#bName').value = '';
+        $('#bPhone').value = '';
+        $('#bookErr').textContent = '';
+        updateBookInfo();
+        $('#bookDlg').showModal();
+        $('#bName').focus();
+      }
+
+      // Tạm tính tiền + gợi ý các khung giờ còn trống.
+      function updateBookInfo() {
+        const court = findCourt(Number($('#bCourt').value));
+        const s = $('#bStart').value, e = $('#bEnd').value;
+        let est = '—';
+        if (court && s && e && toMin(e) > toMin(s)) est = fmtMoney(Math.floor(court.pricePerHour * (toMin(e) - toMin(s)) / 60));
+        $('#bEst').textContent = est;
+
+        let hint = '';
+        if (court && $('#bDate').value === state.date) {
+          hint = court.freeSlots.length
+            ? 'Còn trống: ' + court.freeSlots.map(f => `${f.start}–${f.end}`).join(', ')
+            : 'Sân này đã kín lịch trong ngày.';
+        }
+        $('#bHint').textContent = hint;
+      }
+      ['#bCourt', '#bStart', '#bEnd'].forEach(sel => $(sel).addEventListener('input', updateBookInfo));
+      $('#bDate').addEventListener('change', async e => {
+        if (e.target.value && e.target.value !== state.date) {
+          state.date = e.target.value;
+          await loadBoard();
+        }
+        updateBookInfo();
+      });
+
+      $('#bookForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const body = {
+          customerName: $('#bName').value.trim(),
+          phone: $('#bPhone').value.trim(),
+          courtId: Number($('#bCourt').value),
+          date: $('#bDate').value,
+          start: $('#bStart').value,
+          end: $('#bEnd').value
+        };
+        try {
+          const r = await api('POST', '/api/bookings', body);
+          $('#bookDlg').close();
+          toast(`${vi(r.message)} Tạm tính ${fmtMoney(r.booking.amount)}.`);
+          state.date = r.booking.date;
+          await loadBoard();
+          refreshLookup();
+        } catch (err) { $('#bookErr').textContent = err.message; }
+      });
+
+      // ---------- Chi tiết lượt đặt, thanh toán, hủy ----------
+      function openDetail(k) {
+        if (!k) return;
+        currentBooking = k;
+        $('#invTitle').textContent = `Lượt đặt #${k.id}`;
+        $('#invErr').textContent = '';
+        $('#invBody').innerHTML = `
+      <dt>Khách</dt><dd>${esc(k.customerName)}</dd>
+      <dt>Số điện thoại</dt><dd>${esc(k.phone)}</dd>
+      <dt>Sân</dt><dd>${esc(k.courtName || '(sân đã xóa)')}</dd>
+      <dt>Loại sân</dt><dd><span class="badge ${k.courtType === 'vip' ? 'vip' : 'standard'}">${k.courtType === 'vip' ? 'Sân VIP' : 'Sân thường'}</span></dd>
+      <dt>Ngày</dt><dd>${fmtDate(k.date)}</dd>
+      <dt>Giờ</dt><dd>${k.start} – ${k.end} (${fmtHours(k.durationMinutes)})</dd>
+      <dt>Giá thuê</dt><dd>${fmtMoney(k.pricePerHour)}/giờ</dd>
+      <dt>Trạng thái</dt><dd><span class="badge ${k.paid ? 'paid' : 'unpaid'}">${k.paid ? 'Đã thanh toán' : 'Chưa thanh toán'}</span></dd>
+      <div class="total"><span>Thành tiền</span><b>${fmtMoney(k.amount)}</b></div>`;
+        $('#invFoot').innerHTML = k.paid
+          ? `<button type="button" class="btn" data-act="close">Đóng</button>`
+          : `<button type="button" class="btn danger" data-act="cancel-now">Hủy lượt đặt</button>
+         <button type="button" class="btn" data-act="close">Đóng</button>
+         <button type="button" class="btn primary" data-act="pay-now">Xác nhận thanh toán</button>`;
+        $('#invDlg').showModal();
+      }
+
+      async function payBooking() {
+        if (!currentBooking) return;
+        try {
+          const r = await api('POST', `/api/bookings/${currentBooking.id}/pay`);
+          $('#invDlg').close();
+          toast(vi(r.message));
+          await loadBoard();
+          refreshLookup();
+        } catch (err) { $('#invErr').textContent = err.message; }
+      }
+
+      async function cancelBooking(k) {
+        if (!k) return false;
+        if (!confirm(`Hủy lượt đặt của ${k.customerName} (${fmtDate(k.date)}, ${k.start}–${k.end})?`)) return false;
+        try {
+          const r = await api('DELETE', '/api/bookings/' + k.id);
+          toast(vi(r.message));
+          await loadBoard();
+          refreshLookup();
+          return true;
+        } catch (err) {
+          toast(err.message, true);
+          return false;
+        }
+      }
+
+      async function cancelFromDialog() {
+        if (await cancelBooking(currentBooking)) $('#invDlg').close();
+      }
+
+      // ---------- Tìm theo số điện thoại ----------
+      async function refreshLookup() {
+        if (!state.phone) return;
+        const box = $('#lkResult');
+        try {
+          const r = await api('GET', '/api/bookings?phone=' + encodeURIComponent(state.phone));
+          state.lookup = r.bookings;
+          box.innerHTML = r.bookings.length
+            ? r.bookings.map(k => `
+            <div class="lk-item">
+              <div class="lk-top"><strong>${esc(k.courtName || '(sân đã xóa)')}</strong><span>${fmtDate(k.date)}</span></div>
+              <div class="lk-mid"><span class="t">${k.start}–${k.end}</span><span class="m">${fmtMoney(k.amount)}</span></div>
+              <div class="lk-name">${esc(k.customerName)}</div>
+              <div class="cbtns">
+                <button class="btn sm primary" data-act="lookup-pay" data-id="${k.id}">Thanh toán</button>
+                <button class="btn sm danger" data-act="lookup-cancel" data-id="${k.id}">Hủy lượt đặt</button>
+              </div>
+            </div>`).join('')
+            : '<p class="note">Không có lượt đặt nào chưa thanh toán cho số này.</p>';
+        } catch (err) {
+          state.lookup = [];
+          box.innerHTML = `<p class="err">${esc(err.message)}</p>`;
+        }
+      }
+
+      $('#lookupForm').addEventListener('submit', e => {
+        e.preventDefault();
+        state.phone = $('#lkPhone').value.trim();
+        refreshLookup();
+      });
+
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => { if (state.board) renderBoard(); }, 120);
+      });
+
+      // ---------- Thống kê doanh thu theo tuần, tháng, năm ----------
+      const statsState = {
+        period: 'week',
+        date: toDateStr(new Date()),
+        data: null
+      };
+
+      async function openStats() {
+        $('#statsDlg').showModal();
+        await loadStats();
+      }
+
+      async function loadStats() {
+        try {
+          const url = `/api/stats?period=${encodeURIComponent(statsState.period)}&date=${encodeURIComponent(statsState.date)}`;
+          statsState.data = await api('GET', url);
+          renderStats();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      }
+
+      function renderStats() {
+        const d = statsState.data;
+        if (!d) return;
+
+        $('#statsPeriodLabel').textContent = d.label;
+
+        document.querySelectorAll('#statsDlg .tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.period === statsState.period);
+        });
+
+        const paidRatio = d.totalRevenue > 0 ? Math.round((d.paidRevenue / d.totalRevenue) * 100) : 0;
+        const vipRevenueRatio = d.totalRevenue > 0 ? Math.round((d.vip.revenue / d.totalRevenue) * 100) : 0;
+        const stdRevenueRatio = 100 - vipRevenueRatio;
+        const totalHours = (d.totalMinutes / 60).toFixed(1);
+
+        $('#statsKpis').innerHTML = `
+      <div class="stat-card featured">
+        <div class="card-title"><span>Tổng doanh thu</span></div>
+        <div class="card-val">${fmtMoney(d.totalRevenue)}</div>
+        <div class="card-sub">Đã thu: <b>${fmtMoney(d.paidRevenue)}</b> (${paidRatio}%)<br>Chờ thu: <b>${fmtMoney(d.unpaidRevenue)}</b></div>
+      </div>
+      <div class="stat-card">
+        <div class="card-title"><span>Lượt đặt sân</span></div>
+        <div class="card-val">${d.totalBookings} <small style="font-size:16px;font-weight:500;">lượt</small></div>
+        <div class="card-sub">Sân thường: <b>${d.standard.bookings}</b> | VIP: <b>${d.vip.bookings}</b></div>
+      </div>
+      <div class="stat-card">
+        <div class="card-title"><span>Thời lượng chơi</span></div>
+        <div class="card-val">${totalHours} <small style="font-size:16px;font-weight:500;">giờ</small></div>
+        <div class="card-sub">TB: <b>${d.totalBookings ? (d.totalMinutes / d.totalBookings / 60).toFixed(1) : 0} giờ</b> / lượt đặt</div>
+      </div>
+      <div class="stat-card vip-card">
+        <div class="card-title"><span>Sân VIP vs Thường</span><span>
+        </span></div>
+        <div class="card-val">${fmtMoney(d.vip.revenue)}</div>
+        <div class="card-sub">VIP: <b>${vipRevenueRatio}%</b> | Thường: <b>${stdRevenueRatio}%</b> (${fmtMoney(d.standard.revenue)})</div>
+      </div>
+    `;
+
+        const chart = $('#statsChart');
+        const breakdown = d.breakdown || [];
+        if (!breakdown.length) {
+          chart.innerHTML = '<div style="margin:auto;color:var(--ink-2);padding:40px 0;">Không có dữ liệu trong khoảng thời gian này.</div>';
+        } else {
+          const maxVal = Math.max(...breakdown.map(i => i.totalRevenue), 1);
+          chart.innerHTML = breakdown.map(item => {
+            const heightPct = item.totalRevenue > 0 ? Math.max(10, Math.round((item.totalRevenue / maxVal) * 80)) : 0;
+            const paidPct = item.totalRevenue > 0 ? Math.round((item.paidRevenue / item.totalRevenue) * 100) : 0;
+            const displayVal = item.totalRevenue >= 1000000
+              ? (item.totalRevenue / 1000000).toFixed(1) + 'tr'
+              : (item.totalRevenue >= 1000 ? Math.round(item.totalRevenue / 1000) + 'k' : (item.totalRevenue > 0 ? item.totalRevenue : ''));
+
+            const tipContent = `
+          <div style="font-weight:700;font-size:13px;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:4px;margin-bottom:6px;">${esc(item.label)}</div>
+          <div>Tổng tiền: <b style="color:#F2C230;font-size:13px;">${fmtMoney(item.totalRevenue)}</b></div>
+          <div style="color:#93C5FD">✓ Đã thanh toán: <b>${fmtMoney(item.paidRevenue)}</b></div>
+          ${item.unpaidRevenue > 0 ? `<div style="color:#FCA5A5">⏳ Chờ thanh toán: <b>${fmtMoney(item.unpaidRevenue)}</b></div>` : ''}
+          <div style="margin-top:4px;color:#CBD5E1">Lượt đặt: <b>${item.bookingCount}</b> (${(item.durationMinutes / 60).toFixed(1)} giờ)</div>
+          <div style="color:#CBD5E1">VIP: <b>${fmtMoney(item.vipRevenue)}</b> | Thường: <b>${fmtMoney(item.standardRevenue)}</b></div>
+        `;
+
+            return `
+          <div class="chart-col">
+            <div class="bar-stack" style="height:${heightPct}%;" data-tip="${esc(tipContent)}">
+              <div class="bar-paid" style="height:${paidPct}%;"></div>
+              ${displayVal ? `<span class="bar-val">${displayVal}</span>` : ''}
+            </div>
+            <span class="bar-lbl">${esc(item.label)}</span>
+          </div>
+        `;
+          }).join('');
+        }
+
+        const tbody = $('#statsTableBody');
+        if (!breakdown.length) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--ink-2);">Chưa có lượt đặt nào trong khoảng thời gian này.</td></tr>';
+        } else {
+          let rows = breakdown.map(item => `
+        <tr>
+          <td><strong>${esc(item.label)}</strong></td>
+          <td>${item.bookingCount}</td>
+          <td>${(item.durationMinutes / 60).toFixed(1)} giờ</td>
+          <td>${fmtMoney(item.standardRevenue)}</td>
+          <td>${item.vipRevenue > 0 ? `<span class="badge vip" style="font-size:11px;">${fmtMoney(item.vipRevenue)}</span>` : '0 ₫'}</td>
+          <td style="color:var(--navy);font-weight:600;">${fmtMoney(item.paidRevenue)}</td>
+          <td style="text-align:right;font-weight:700;">${fmtMoney(item.totalRevenue)}</td>
+        </tr>
+      `).join('');
+
+          rows += `
+        <tr class="total-row">
+          <td>TỔNG CỘNG</td>
+          <td>${d.totalBookings}</td>
+          <td>${totalHours} giờ</td>
+          <td>${fmtMoney(d.standard.revenue)}</td>
+          <td>${fmtMoney(d.vip.revenue)}</td>
+          <td style="color:var(--navy);">${fmtMoney(d.paidRevenue)}</td>
+          <td style="text-align:right;">${fmtMoney(d.totalRevenue)}</td>
+        </tr>
+      `;
+          tbody.innerHTML = rows;
+        }
+      }
+
+      // Định vị tooltip nổi độc lập, chống tràn viền
+      function positionChartTooltip(bar) {
+        const tt = $('#chartTooltip');
+        const rect = bar.getBoundingClientRect();
+        const dlgRect = $('#statsDlg').getBoundingClientRect();
+        let top = rect.top - 10;
+        let left = rect.left + rect.width / 2;
+
+        if (top - 130 < dlgRect.top || top - 130 < 10) {
+          tt.classList.add('flipped');
+          top = rect.bottom;
+        } else {
+          tt.classList.remove('flipped');
+        }
+
+        tt.style.top = top + 'px';
+        tt.style.left = left + 'px';
+      }
+
+      $('#statsChart').addEventListener('mouseover', e => {
+        const bar = e.target.closest('.bar-stack');
+        const tt = $('#chartTooltip');
+        if (!bar || !bar.dataset.tip) {
+          tt.style.display = 'none';
+          return;
+        }
+        tt.innerHTML = bar.dataset.tip;
+        tt.style.display = 'block';
+        positionChartTooltip(bar);
+      });
+
+      $('#statsChart').addEventListener('mousemove', e => {
+        const bar = e.target.closest('.bar-stack');
+        if (bar && bar.dataset.tip) {
+          positionChartTooltip(bar);
+        }
+      });
+
+      $('#statsChart').addEventListener('mouseleave', () => {
+        $('#chartTooltip').style.display = 'none';
+      });
+
+      $('#statsDlg').addEventListener('close', () => {
+        $('#chartTooltip').style.display = 'none';
+      });
+
+      document.querySelectorAll('#statsDlg .tab-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          statsState.period = btn.dataset.period;
+          await loadStats();
+        });
+      });
+
+      document.addEventListener('click', async e => {
+        const btn = e.target.closest('[data-stats-act]');
+        if (!btn) return;
+        const act = btn.dataset.statsAct;
+        if (act === 'current') {
+          statsState.date = toDateStr(new Date());
+        } else if (act === 'prev' || act === 'next') {
+          const dir = act === 'next' ? 1 : -1;
+          if (statsState.period === 'week') statsState.date = addDays(statsState.date, dir * 7);
+          else if (statsState.period === 'month') statsState.date = addMonths(statsState.date, dir);
+          else if (statsState.period === 'year') statsState.date = addYears(statsState.date, dir);
+        }
+        await loadStats();
+      });
+
+      loadBoard();
+    })();
+  </script>
+</body>
+
+</html>

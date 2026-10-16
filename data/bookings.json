@@ -1,0 +1,32 @@
+[
+  {
+    "courtId": 1,
+    "customerName": "qq",
+    "date": "2026-10-14",
+    "endMin": 360,
+    "id": 1,
+    "paid": true,
+    "phone": "0123456789",
+    "startMin": 300
+  },
+  {
+    "courtId": 3,
+    "customerName": "Nguyen Van A",
+    "date": "2026-10-14",
+    "endMin": 600,
+    "id": 2,
+    "paid": true,
+    "phone": "0987654321",
+    "startMin": 480
+  },
+  {
+    "courtId": 1,
+    "customerName": "minh tri",
+    "date": "2026-10-16",
+    "endMin": 420,
+    "id": 3,
+    "paid": true,
+    "phone": "0774483794",
+    "startMin": 360
+  }
+]

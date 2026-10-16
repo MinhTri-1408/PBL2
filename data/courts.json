@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Sân 1",
+    "pricePerHour": 150000,
+    "type": "standard"
+  },
+  {
+    "id": 2,
+    "name": "Sân 2",
+    "pricePerHour": 150000,
+    "type": "standard"
+  },
+  {
+    "id": 3,
+    "name": "Sân VIP 1",
+    "pricePerHour": 250000,
+    "type": "vip"
+  },
+  {
+    "id": 4,
+    "name": "Sân 3",
+    "pricePerHour": 150000,
+    "type": "standard"
+  }
+]
